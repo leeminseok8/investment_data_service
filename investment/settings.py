@@ -131,10 +131,6 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# custom_user
-
-AUTH_USER_MODEL = "accounts.User"
-
 # DB LOG
 
 # LOGGING = {
