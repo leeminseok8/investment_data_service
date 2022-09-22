@@ -8,8 +8,10 @@ django.setup()
 from accounts.models import User, Brokerage, UserBrokerage, Account
 from stocks.models import Stock, Asset
 
+STOCK_PATH = "./resource/stock_info_set.csv"
+ASSET_PATH = "./resource/asset_info_set.csv"
 ACCOUNT_PATH = "./resource/account_info_set.csv"
-STOCK_ASSET_PATH = "./resource/stock_asset_info_set.csv"
+BROKERAGE_PATH = "./resource/brokerage_info_set.csv"
 USER_BROKERAGE_PATH = "./resource/user_brokerage_info_set.csv"
 
 
@@ -28,11 +30,11 @@ def insert_user():
 
 
 def insert_brokerage():
-    with open(USER_BROKERAGE_PATH) as csv_file:
+    with open(BROKERAGE_PATH) as csv_file:
         data_reader = csv.reader(csv_file)
         next(data_reader, None)
         for row in data_reader:
-            brokerage_name = row[1]
+            brokerage_name = row[0]
 
             Brokerage.objects.create(
                 brokerage_name=brokerage_name,
@@ -46,8 +48,8 @@ def insert_user_brokerage():
         data_reader = csv.reader(csv_file)
         next(data_reader, None)
         for row in data_reader:
-            user_id = row[2]
-            brokerage_id = row[3]
+            user_id = row[1]
+            brokerage_id = row[2]
             user = User.objects.get(id=user_id)
             brokerage = Brokerage.objects.get(id=brokerage_id)
 
@@ -78,7 +80,7 @@ def insert_account():
 
 
 def insert_stock():
-    with open(STOCK_ASSET_PATH) as csv_file:
+    with open(STOCK_PATH) as csv_file:
         data_reader = csv.reader(csv_file)
         next(data_reader, None)
         for row in data_reader:
@@ -94,14 +96,14 @@ def insert_stock():
 
 
 def insert_asset():
-    with open(STOCK_ASSET_PATH) as csv_file:
+    with open(ASSET_PATH) as csv_file:
         data_reader = csv.reader(csv_file)
         next(data_reader, None)
         for row in data_reader:
-            current_price = row[4]
-            quantity = row[5]
-            account_id = row[6]
-            stock_id = row[7]
+            current_price = row[0]
+            quantity = row[1]
+            account_id = row[2]
+            stock_id = row[3]
             account = Account.objects.get(id=account_id)
             stock = Stock.objects.get(id=stock_id)
 
