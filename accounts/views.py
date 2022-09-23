@@ -14,11 +14,18 @@ from .serializers import (
 
 @api_view(("GET",))
 def get_investment(request):
+    """
+    투자 화면 API
+    """
+
     account = Account.objects.get(id=1)
     serializer = InvestmentSerializer(account)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
 
+    """
+    로그인을 통해 구현 시 is_authenticated를 통해 본인 인증을 거친 응답 로직
+    """
     # if request.user.is_authenticated:
     #     account = Account.objects.all()
     #     serializer = InvestmentSerializer(account, many=True)
@@ -30,6 +37,10 @@ def get_investment(request):
 
 @api_view(("GET",))
 def get_investment_detail(request):
+    """
+    투자 상세 화면 API
+    """
+
     account = Account.objects.get(id=1)
     serializer = InvestmentDetailSerializer(account)
 
@@ -38,6 +49,10 @@ def get_investment_detail(request):
 
 @api_view(("GET",))
 def get_own_stock(request):
+    """
+    보유 종목 화면 API
+    """
+
     asset = Asset.objects.get(id=1)
     serializer = AssetSerializer(asset)
 

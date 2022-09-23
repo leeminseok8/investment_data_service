@@ -19,8 +19,13 @@ class StockSerializer(serializers.ModelSerializer):
 
 
 class AssetSerializer(serializers.ModelSerializer):
+    """
+    보유 종목 화면 시리얼라이저
+    응답 : 자산군, 종목명, ISIN, 평가 금액
+    """
+
     stock = StockSerializer(read_only=True)
-    stock_valuation = serializers.SerializerMethodField()
+    stock_valuation = serializers.SerializerMethodField()  # 보유 종목 평가 금액
 
     class Meta:
         model = Asset
@@ -32,13 +37,18 @@ class AssetSerializer(serializers.ModelSerializer):
 
 
 class InvestmentSerializer(serializers.ModelSerializer):
+    """
+    투자 화면 시리얼라이저
+    응답 : 유저 이름, 계좌 이름, 계좌 번호, 증권사, 총 자산
+    """
+
     user_name = serializers.SlugRelatedField(
         read_only=True, slug_field="user_name", source="user"
     )
     brokerage_name = serializers.SlugRelatedField(
         read_only=True, slug_field="brokerage_name", source="brokerage"
     )
-    total_asset = serializers.SerializerMethodField()
+    total_asset = serializers.SerializerMethodField()  # 총 자산
 
     class Meta:
         model = Account
@@ -62,8 +72,13 @@ class InvestmentSerializer(serializers.ModelSerializer):
 
 
 class InvestmentDetailSerializer(InvestmentSerializer):
-    total_proceed = serializers.SerializerMethodField()
-    yeild = serializers.SerializerMethodField()
+    """
+    투자 상세 화면 시리얼라이저
+    응답 : 유저 이름, 계좌 이름, 계좌 번호, 증권사, 총 자산, 총 수익, 수익률, 투자 원금
+    """
+
+    total_proceed = serializers.SerializerMethodField()  # 총 수익
+    yeild = serializers.SerializerMethodField()  # 수익률
 
     class Meta:
         model = Account
