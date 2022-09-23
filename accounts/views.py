@@ -53,7 +53,7 @@ def get_own_stock(request):
     보유 종목 화면 API
     """
 
-    asset = Asset.objects.get(id=1)
-    serializer = AssetSerializer(asset)
+    asset = Asset.objects.filter(account_id=1)
+    serializer = AssetSerializer(asset, many=True)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
