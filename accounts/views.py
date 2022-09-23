@@ -3,8 +3,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 from .models import Account
+from stocks.models import Asset
 
 from .serializers import (
+    AssetSerializer,
     InvestmentDetailSerializer,
     InvestmentSerializer,
 )
@@ -30,5 +32,13 @@ def get_investment(request):
 def get_investment_detail(request):
     account = Account.objects.get(id=1)
     serializer = InvestmentDetailSerializer(account)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(("GET",))
+def get_own_stock(request):
+    asset = Asset.objects.get(id=1)
+    serializer = AssetSerializer(asset)
 
     return Response(serializer.data, status=status.HTTP_200_OK)

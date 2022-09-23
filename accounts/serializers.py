@@ -1,6 +1,34 @@
 from rest_framework import serializers
 
 from .models import Account
+from stocks.models import Asset, AssetGroup, Stock
+
+
+class AssetGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AssetGroup
+        fields = ["asset_name"]
+
+
+class StockSerializer(serializers.ModelSerializer):
+    group = AssetGroupSerializer(read_only=True)
+
+    class Meta:
+        model = Stock
+        fields = ["stock_name", "ISIN", "group"]
+
+
+class AssetSerializer(serializers.ModelSerializer):
+    stock = StockSerializer(read_only=True)
+    stock_valuation = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Asset
+        fields = ["stock", "stock_valuation"]
+
+    def get_stock_valuation(self, obj):
+        stock_val = obj.quantity * obj.stock.current_price
+        return stock_val
 
 
 class InvestmentSerializer(serializers.ModelSerializer):
