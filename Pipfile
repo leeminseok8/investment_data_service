@@ -11,6 +11,7 @@ python-dotenv = "*"
 black = "*"
 pre-commit = "*"
 isort = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 

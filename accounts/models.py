@@ -40,3 +40,16 @@ class Account(models.Model):
 
     class Meta:
         db_table = "accounts"
+
+
+class Deposit(models.Model):
+    """
+    계좌 입금 테이블
+    """
+
+    amount = models.PositiveBigIntegerField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "deposits"

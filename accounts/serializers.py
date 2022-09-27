@@ -1,7 +1,11 @@
 from rest_framework import serializers
 
-from .models import Account
+from .models import Account, Deposit
 from stocks.models import Asset, AssetGroup, Stock
+
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+from .models import User
 
 
 class AssetGroupSerializer(serializers.ModelSerializer):
@@ -99,3 +103,20 @@ class InvestmentDetailSerializer(InvestmentSerializer):
 
     def get_yeild(self, obj):
         return self.get_total_proceed(obj) / (obj.investment_principal * 100)
+
+
+class SignInSerializer(TokenObtainPairSerializer):
+    def validate(self, data):
+        username = data.get("user_name")
+
+        user = User.objects.get(user_name=username)
+
+        token = super().get_token(user)
+        access_token = str(token.access_token)
+        refresh_token = str(token)
+
+        data = {
+            "access": access_token,
+            "refresh": refresh_token,
+        }
+        return data
