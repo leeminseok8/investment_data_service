@@ -105,6 +105,18 @@ class InvestmentDetailSerializer(InvestmentSerializer):
         return self.get_total_proceed(obj) / (obj.investment_principal * 100)
 
 
+class DepositCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Deposit
+        fields = ["amount", "user", "account"]
+
+    def create(self, validated_data):
+        deposit = Deposit.objects.create(**validated_data)
+        deposit.save()
+
+        return deposit
+
+
 class SignInSerializer(TokenObtainPairSerializer):
     def validate(self, data):
         username = data.get("user_name")

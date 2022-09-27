@@ -69,6 +69,48 @@ def get_own_stock(request):
     return Response({"message": "권한이 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(("POST",))
+@permission_classes([AllowAny])
+def verificate_account(request):
+    """
+    계좌 입금 Phase1
+    """
+
+    data = json.loads(request.body)
+
+    user_id = data["user"]
+    account_id = data["account"]
+
+    if request.user.is_authenticated:
+        user = User.objects.get(id=user_id)
+
+        if not request.user.user_name == user.user_name:
+            return Response(
+                {"message": "본인 인증에 실패하였습니다."}, status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        accounts = Account.objects.filter(user_id=user_id)
+        re_account = Account.objects.get(id=account_id)
+
+        for account in accounts:
+            if account.account_number == re_account.account_number:
+                print(account.account_number == re_account.account_number)
+                break
+
+        serializer = DepositCreateSerializer(data=data)
+
+        if serializer.is_valid():
+            serializer.save()
+            transfer_identifier = Deposit.objects.last().id
+
+            return Response({"transfer_identifier": transfer_identifier})
+
+        return Response(
+            {"message": "인증에 실패하였습니다."}, status=status.HTTP_401_UNAUTHORIZED
+        )
+    return Response({"message": "인가 실패"})
+
+
 class SignInView(GenericAPIView):
     """
     JWT를 사용한 로그인 기능
