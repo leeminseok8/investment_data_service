@@ -9,7 +9,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.generics import GenericAPIView
 
 from .models import Account, Deposit, User
-from stocks.models import Asset
+from apps.stocks.models import Asset
 
 from .serializers import (
     AssetSerializer,

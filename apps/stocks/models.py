@@ -1,6 +1,6 @@
 from django.db import models
 
-from accounts.models import Account
+from apps.accounts.models import Account
 
 
 class AssetGroup(models.Model):

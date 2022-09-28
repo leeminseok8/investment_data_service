@@ -51,8 +51,8 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "accounts",
-    "stocks",
+    "apps.accounts",
+    "apps.stocks",
 ]
 
 INSTALLED_APPS += THIRD_PARTY_APPS + LOCAL_APPS

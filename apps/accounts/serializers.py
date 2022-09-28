@@ -1,11 +1,9 @@
 from rest_framework import serializers
 
-from .models import Account, Deposit
-from stocks.models import Asset, AssetGroup, Stock
+from .models import Account, Deposit, User
+from apps.stocks.models import Asset, AssetGroup, Stock
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
-from .models import User
 
 
 class AssetGroupSerializer(serializers.ModelSerializer):
