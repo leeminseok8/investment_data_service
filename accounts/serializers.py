@@ -33,7 +33,7 @@ class AssetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Asset
-        fields = ["stock", "stock_valuation"]
+        fields = ["id", "stock", "stock_valuation", "account_id"]
 
     def get_stock_valuation(self, obj):
         stock_val = obj.quantity * obj.stock.current_price
@@ -58,6 +58,7 @@ class InvestmentSerializer(serializers.ModelSerializer):
         model = Account
         fields = [
             "id",
+            "user_id",
             "user_name",
             "account_name",
             "account_number",
@@ -88,6 +89,7 @@ class InvestmentDetailSerializer(InvestmentSerializer):
         model = Account
         fields = [
             "id",
+            "user_id",
             "account_name",
             "account_number",
             "investment_principal",
@@ -102,7 +104,7 @@ class InvestmentDetailSerializer(InvestmentSerializer):
         return total_proceed
 
     def get_yeild(self, obj):
-        return self.get_total_proceed(obj) / (obj.investment_principal * 100)
+        return round(self.get_total_proceed(obj) * 100 / (obj.investment_principal), 2)
 
 
 class DepositVerificateCreateSerializer(serializers.ModelSerializer):

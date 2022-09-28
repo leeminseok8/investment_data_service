@@ -1,10 +1,12 @@
 import json
 import hashlib
+from django.shortcuts import get_object_or_404
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.permissions import AllowAny
+from rest_framework.generics import GenericAPIView
 
 from .models import Account, Deposit, User
 from stocks.models import Asset
@@ -18,8 +20,6 @@ from .serializers import (
     SignInSerializer,
 )
 
-from rest_framework.generics import GenericAPIView
-
 
 @api_view(("GET",))
 def get_investment(request):
@@ -28,10 +28,8 @@ def get_investment(request):
     클라이언트에서 유저 정보를 포함하여 요청
     """
 
-    data = json.loads(request.body)
-
     if request.user.is_authenticated:
-        account = Account.objects.get(id=data["user_id"])
+        account = get_object_or_404(Account, user_id=request.user.id)
         serializer = InvestmentSerializer(account)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -44,10 +42,8 @@ def get_investment_detail(request):
     투자 상세 화면 API
     """
 
-    data = json.loads(request.body)
-
     if request.user.is_authenticated:
-        account = Account.objects.get(id=data["user_id"])
+        account = get_object_or_404(Account, user_id=request.user.id)
         serializer = InvestmentDetailSerializer(account)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -60,10 +56,9 @@ def get_own_stock(request):
     보유 종목 화면 API
     """
 
-    data = json.loads(request.body)
-
     if request.user.is_authenticated:
-        asset = Asset.objects.filter(account_id=data["account_id"])
+        account = get_object_or_404(Account, user_id=request.user.id)
+        asset = Asset.objects.filter(account_id=account.id)
         serializer = AssetSerializer(asset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -124,7 +119,8 @@ def deposit_account(request):
     if request.user.is_authenticated:
         transfer_user = Deposit.objects.get(id=transfer_identifier)
 
-        signature_str = f"{transfer_user.account.account_number}{transfer_user.user.user_name}{transfer_user.amount}"
+        salt = "chicken"
+        signature_str = f"{transfer_user.account.account_number}{transfer_user.user.user_name}{transfer_user.amount}{salt}"
         signature_hash = hashlib.sha3_512(signature_str.encode("utf-8")).hexdigest()
 
         if not signature_hash == signature:
