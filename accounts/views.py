@@ -119,7 +119,8 @@ def deposit_account(request):
     if request.user.is_authenticated:
         transfer_user = Deposit.objects.get(id=transfer_identifier)
 
-        signature_str = f"{transfer_user.account.account_number}{transfer_user.user.user_name}{transfer_user.amount}"
+        salt = "chicken"
+        signature_str = f"{transfer_user.account.account_number}{transfer_user.user.user_name}{transfer_user.amount}{salt}"
         signature_hash = hashlib.sha3_512(signature_str.encode("utf-8")).hexdigest()
 
         if not signature_hash == signature:
