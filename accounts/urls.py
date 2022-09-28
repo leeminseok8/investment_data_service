@@ -14,7 +14,7 @@ urlpatterns = [
     path("", get_investment),
     path("detail", get_investment_detail),
     path("own", get_own_stock),
-    path("deposit1", verificate_account),
-    path("deposit2", deposit_account),
+    path("deposit/p1", verificate_account),
+    path("deposit/p2", deposit_account),
     path("signin", SignInView.as_view()),
 ]
