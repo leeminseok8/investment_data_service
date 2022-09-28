@@ -104,7 +104,7 @@ class InvestmentDetailSerializer(InvestmentSerializer):
         return total_proceed
 
     def get_yeild(self, obj):
-        return self.get_total_proceed(obj) / (obj.investment_principal * 100)
+        return round(self.get_total_proceed(obj) * 100 / (obj.investment_principal), 2)
 
 
 class DepositVerificateCreateSerializer(serializers.ModelSerializer):
