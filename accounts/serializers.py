@@ -105,7 +105,12 @@ class InvestmentDetailSerializer(InvestmentSerializer):
         return self.get_total_proceed(obj) / (obj.investment_principal * 100)
 
 
-class DepositCreateSerializer(serializers.ModelSerializer):
+class DepositVerificateCreateSerializer(serializers.ModelSerializer):
+    """
+    계좌 입금 유저 검증 (Phase1) 시리얼라이저
+    request = [유저 이름(fk), 계좌 번호(fk), 입금 금액]
+    """
+
     class Meta:
         model = Deposit
         fields = ["amount", "user", "account"]
@@ -117,7 +122,22 @@ class DepositCreateSerializer(serializers.ModelSerializer):
         return deposit
 
 
+class DepositUpdateSerializer(serializers.ModelSerializer):
+    """
+    계좌 입금 업데이트 (Phase2) 시리얼라이저
+    """
+
+    class Meta:
+        model = Account
+        fields = "__all__"
+
+
 class SignInSerializer(TokenObtainPairSerializer):
+    """
+    로그인 시리얼라이저
+    비밀번호는 "0"으로 통일하여 제외하였습니다.
+    """
+
     def validate(self, data):
         username = data.get("user_name")
 

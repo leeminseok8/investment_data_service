@@ -1,10 +1,10 @@
 import json
+import hashlib
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.permissions import AllowAny
-from rest_framework.decorators import permission_classes
 
 from .models import Account, Deposit, User
 from stocks.models import Asset
@@ -13,7 +13,8 @@ from .serializers import (
     AssetSerializer,
     InvestmentDetailSerializer,
     InvestmentSerializer,
-    DepositCreateSerializer,
+    DepositVerificateCreateSerializer,
+    DepositUpdateSerializer,
     SignInSerializer,
 )
 
@@ -70,7 +71,6 @@ def get_own_stock(request):
 
 
 @api_view(("POST",))
-@permission_classes([AllowAny])
 def verificate_account(request):
     """
     계좌 입금 Phase1
@@ -94,10 +94,9 @@ def verificate_account(request):
 
         for account in accounts:
             if account.account_number == re_account.account_number:
-                print(account.account_number == re_account.account_number)
                 break
 
-        serializer = DepositCreateSerializer(data=data)
+        serializer = DepositVerificateCreateSerializer(data=data)
 
         if serializer.is_valid():
             serializer.save()
@@ -108,7 +107,49 @@ def verificate_account(request):
         return Response(
             {"message": "인증에 실패하였습니다."}, status=status.HTTP_401_UNAUTHORIZED
         )
-    return Response({"message": "인가 실패"})
+    return Response({"message": "로그인 또는 권한이 필요합니다."})
+
+
+@api_view(("POST",))
+def deposit_account(request):
+    """
+    계좌 입금 Phase2
+    """
+
+    data = json.loads(request.body)
+
+    signature = data["signature"]
+    transfer_identifier = data["transfer_identifier"]
+
+    if request.user.is_authenticated:
+        transfer_user = Deposit.objects.get(id=transfer_identifier)
+
+        signature_str = f"{transfer_user.account.account_number}{transfer_user.user.user_name}{transfer_user.amount}"
+        signature_hash = hashlib.sha3_512(signature_str.encode("utf-8")).hexdigest()
+
+        if not signature_hash == signature:
+            return Response({"message": "권한이 필요합니다."}, status=status.HTTP_403_FORBIDDEN)
+
+        account = Account.objects.get(
+            account_number=transfer_user.account.account_number
+        )
+
+        account_update_data = {
+            "account_name": account.account_name,
+            "account_number": account.account_number,
+            "investment_principal": account.investment_principal + transfer_user.amount,
+            "user": account.user.id,
+            "brokerage": account.brokerage.id,
+        }
+
+        serializer = DepositUpdateSerializer(instance=account, data=account_update_data)
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response({"status": "True"}, status=status.HTTP_201_CREATED)
+        return Response({"status": "False"}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"message": "로그인 또는 권한이 필요합니다."})
 
 
 class SignInView(GenericAPIView):
