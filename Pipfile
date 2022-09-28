@@ -12,6 +12,7 @@ black = "*"
 pre-commit = "*"
 isort = "*"
 djangorestframework-simplejwt = "*"
+drf-yasg = "*"
 
 [dev-packages]
 
