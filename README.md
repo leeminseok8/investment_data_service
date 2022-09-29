@@ -3,11 +3,69 @@
 
 ---
 ## 목차
-1. [사용 기술 스택](#사용-기술-스택)
-2. [MVP Service](#MVP-Service)
-3. [ERD](#ERD)
-4. [API 명세서](#API-명세서)
-5. [기능 명세서 및 분석](#기능-명세서-및-분석)
+1. [사용법](#사용법)
+2. [사용 기술 스택](#사용-기술-스택)
+3. [MVP Service](#MVP-Service)
+4. [ERD](#ERD)
+5. [API 명세서](#API-명세서)
+6. [기능 명세서 및 분석](#기능-명세서-및-분석)
+
+<br>
+
+---
+
+## 사용법
+- [가상 환경 설치](#가상-환경-설치)부터는 프로젝트 최상위 디렉토리(investment_service)에서 명령어를 입력하셔야 합니다.
+
+### 프로젝트 로컬 설치
+```
+> git clone https://github.com/leeminseok8/investment_data_service.git
+
+> cd --project_name
+```
+
+### 가상 환경 설치
+> pipenv를 사용하였습니다.
+```
+프로젝트 최상위 디렉토리(Pipfile)에서 실행)
+> pwd
+~/.../investment_service
+
+
+pipenv가 없으시다면)
+> pip install pipenv
+
+> pipenv shell
+
+
+pipenv가 있으시다면)
+> pipenv shell
+```
+
+### DB 생성
+```
+프로젝트 최상위 디렉토리(manage.py)에서 실행)
+> pwd
+~/.../investment_service
+
+> python manage.py makemigrations
+
+> python manage.py migrate
+```
+
+### Batch 파일로 데이터 삽입
+```
+프로젝트 최상위 디렉토리에서 실행)
+> pwd
+~/.../investment_service
+
+> python uploader.py
+```
+
+### 로컬(개발용) 서버 실행
+```
+> python manage.py runserver
+```
 
 <br>
 
@@ -71,6 +129,10 @@
 | - |  |  |  |  |
 | **Orders** | accounts/deposit/p1/ | POST | 입금 계좌 검증 | 로그인 |
 |  | accounts/deposit/p2/ | POST | 계좌 자산 업데이트 | 로그인 |
+
+<br>
+
+---
 
 ## 기능 명세서 및 분석
 
