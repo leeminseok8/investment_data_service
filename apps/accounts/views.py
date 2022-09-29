@@ -73,25 +73,31 @@ def verificate_account(request):
 
     data = json.loads(request.body)
 
-    user_id = data["user"]
-    account_id = data["account"]
+    user_name = data["user_name"]
+    account_number = data["account_number"]
 
     if request.user.is_authenticated:
-        user = User.objects.get(id=user_id)
+        user = User.objects.get(user_name=user_name)
 
         if not request.user.user_name == user.user_name:
             return Response(
                 {"message": "본인 인증에 실패하였습니다."}, status=status.HTTP_401_UNAUTHORIZED
             )
 
-        accounts = Account.objects.filter(user_id=user_id)
-        re_account = Account.objects.get(id=account_id)
+        accounts = Account.objects.filter(user_id=user.id)
+        re_account = Account.objects.get(account_number=account_number)
 
         for account in accounts:
             if account.account_number == re_account.account_number:
                 break
 
-        serializer = DepositVerificateCreateSerializer(data=data)
+        deposit_create_data = {
+            "amount": request.data["amount"],
+            "user": user.id,
+            "account": re_account.id,
+        }
+
+        serializer = DepositVerificateCreateSerializer(data=deposit_create_data)
 
         if serializer.is_valid():
             serializer.save()
