@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class StocksConfig(AppConfig):
+class UsersConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "apps.stocks"
+    name = "apps.users"
