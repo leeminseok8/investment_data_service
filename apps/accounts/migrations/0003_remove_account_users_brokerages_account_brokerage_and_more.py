@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 default=True,
                 on_delete=django.db.models.deletion.CASCADE,
-                to="accounts.user",
+                to="users.user",
             ),
             preserve_default=False,
         ),

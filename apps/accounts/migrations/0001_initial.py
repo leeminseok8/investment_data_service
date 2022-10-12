@@ -29,24 +29,24 @@ class Migration(migrations.Migration):
                 "db_table": "brokerages",
             },
         ),
-        migrations.CreateModel(
-            name="User",
-            fields=[
-                (
-                    "id",
-                    models.BigAutoField(
-                        auto_created=True,
-                        primary_key=True,
-                        serialize=False,
-                        verbose_name="ID",
-                    ),
-                ),
-                ("user_name", models.CharField(max_length=16, verbose_name="유저 이름")),
-            ],
-            options={
-                "db_table": "users",
-            },
-        ),
+        # migrations.CreateModel(
+        #     name="User",
+        #     fields=[
+        #         (
+        #             "id",
+        #             models.BigAutoField(
+        #                 auto_created=True,
+        #                 primary_key=True,
+        #                 serialize=False,
+        #                 verbose_name="ID",
+        #             ),
+        #         ),
+        #         ("user_name", models.CharField(max_length=16, verbose_name="유저 이름")),
+        #     ],
+        #     options={
+        #         "db_table": "users",
+        #     },
+        # ),
         migrations.CreateModel(
             name="UserBrokerage",
             fields=[
@@ -69,7 +69,7 @@ class Migration(migrations.Migration):
                 (
                     "user",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="accounts.user"
+                        on_delete=django.db.models.deletion.CASCADE, to="users.user"
                     ),
                 ),
             ],
