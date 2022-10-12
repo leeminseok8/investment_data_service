@@ -1,9 +1,6 @@
 from rest_framework import serializers
 
-from .models import Account, Deposit, User
-from apps.stocks.models import Asset, AssetGroup, Stock
-
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .models import Account, Deposit, Asset, AssetGroup, Stock
 
 
 class AssetGroupSerializer(serializers.ModelSerializer):
@@ -130,25 +127,3 @@ class DepositUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Account
         fields = "__all__"
-
-
-class SignInSerializer(TokenObtainPairSerializer):
-    """
-    로그인 시리얼라이저
-    비밀번호는 "0"으로 통일하여 제외하였습니다.
-    """
-
-    def validate(self, data):
-        username = data.get("user_name")
-
-        user = User.objects.get(user_name=username)
-
-        token = super().get_token(user)
-        access_token = str(token.access_token)
-        refresh_token = str(token)
-
-        data = {
-            "access": access_token,
-            "refresh": refresh_token,
-        }
-        return data

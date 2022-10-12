@@ -5,8 +5,7 @@ import django
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "investment.settings")
 django.setup()
 
-from apps.accounts.models import User, Brokerage, Account
-from apps.stocks.models import AssetGroup, Stock, Asset
+from apps.accounts.models import User, Brokerage, Account, AssetGroup, Stock, Asset
 
 USER_PATH = "./resource/user_info_set.csv"
 STOCK_PATH = "./resource/stock_info_set.csv"

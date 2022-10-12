@@ -6,7 +6,6 @@ from .views import (
     get_own_stock,
     verificate_account,
     deposit_account,
-    SignInView,
 )
 
 
@@ -16,5 +15,4 @@ urlpatterns = [
     path("own", get_own_stock),
     path("deposit/p1", verificate_account),
     path("deposit/p2", deposit_account),
-    path("signin", SignInView.as_view()),
 ]
