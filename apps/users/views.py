@@ -1,3 +1,5 @@
+from typing import Dict
+from urllib.request import Request
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -14,7 +16,7 @@ class SignInView(GenericAPIView):
     permission_classes = [AllowAny]
     serializer_class = SignInSerializer
 
-    def post(self, request):
+    def post(self, request: Request) -> Dict:
         serializer = self.get_serializer(data=request.data)
 
         if serializer.is_valid():

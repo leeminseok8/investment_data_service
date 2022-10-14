@@ -1,5 +1,7 @@
 import json
 import hashlib
+from typing import Dict
+from urllib.request import Request
 from django.shortcuts import get_object_or_404
 
 from rest_framework import status
@@ -19,7 +21,7 @@ from .serializers import (
 
 
 @api_view(("GET",))
-def get_investment(request):
+def get_investment(request: Request) -> Dict:
     """
     투자 화면 API
     클라이언트에서 유저 정보를 포함하여 요청
@@ -34,7 +36,7 @@ def get_investment(request):
 
 
 @api_view(("GET",))
-def get_investment_detail(request):
+def get_investment_detail(request: Request) -> Dict:
     """
     투자 상세 화면 API
     """
@@ -48,7 +50,7 @@ def get_investment_detail(request):
 
 
 @api_view(("GET",))
-def get_own_stock(request):
+def get_own_stock(request: Request) -> Dict:
     """
     보유 종목 화면 API
     """
@@ -63,7 +65,7 @@ def get_own_stock(request):
 
 
 @api_view(("POST",))
-def verificate_account(request):
+def verificate_account(request: Request) -> int:
     """
     계좌 입금 Phase1
     """
@@ -109,7 +111,7 @@ def verificate_account(request):
 
 
 @api_view(("POST",))
-def deposit_account(request):
+def deposit_account(request: Request) -> str:
     """
     계좌 입금 Phase2
     """
