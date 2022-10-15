@@ -2,13 +2,12 @@ import json
 import hashlib
 from typing import Dict
 from urllib.request import Request
-from django.shortcuts import get_object_or_404
 
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from .models import Account, Deposit, Asset
+from .models import Deposit
 from apps.users.models import User
 
 from .serializers import (
@@ -17,6 +16,16 @@ from .serializers import (
     InvestmentSerializer,
     DepositVerificateCreateSerializer,
     DepositUpdateSerializer,
+)
+
+from .repository.get_object import (
+    get_user_account,
+    get_user_all_account,
+    get_user_own_asset,
+    get_requested_account,
+    get_transfer_identifier,
+    get_deposit,
+    get_deposited_account,
 )
 
 
@@ -28,7 +37,7 @@ def get_investment(request: Request) -> Dict:
     """
 
     if request.user.is_authenticated:
-        account = get_object_or_404(Account, user_id=request.user.id)
+        account = get_user_account(request.user)
         serializer = InvestmentSerializer(account)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -42,7 +51,7 @@ def get_investment_detail(request: Request) -> Dict:
     """
 
     if request.user.is_authenticated:
-        account = get_object_or_404(Account, user_id=request.user.id)
+        account = get_user_account(request.user)
         serializer = InvestmentDetailSerializer(account)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -56,8 +65,8 @@ def get_own_stock(request: Request) -> Dict:
     """
 
     if request.user.is_authenticated:
-        account = get_object_or_404(Account, user_id=request.user.id)
-        asset = Asset.objects.filter(account_id=account.id)
+        account = get_user_account(request.user)
+        asset = get_user_own_asset(account.id)
         serializer = AssetSerializer(asset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -83,24 +92,24 @@ def verificate_account(request: Request) -> int:
                 {"message": "본인 인증에 실패하였습니다."}, status=status.HTTP_401_UNAUTHORIZED
             )
 
-        accounts = Account.objects.filter(user_id=user.id)
-        re_account = Account.objects.get(account_number=account_number)
+        accounts = get_user_all_account(user)
+        request_account = get_requested_account(account_number)
 
         for account in accounts:
-            if account.account_number == re_account.account_number:
+            if account.account_number == request_account.account_number:
                 break
 
         deposit_create_data = {
             "amount": request.data["amount"],
             "user": user.id,
-            "account": re_account.id,
+            "account": request_account.id,
         }
 
         serializer = DepositVerificateCreateSerializer(data=deposit_create_data)
 
         if serializer.is_valid():
             serializer.save()
-            transfer_identifier = Deposit.objects.last().id
+            transfer_identifier = get_transfer_identifier()
 
             return Response({"transfer_identifier": transfer_identifier})
 
@@ -122,7 +131,7 @@ def deposit_account(request: Request) -> str:
     transfer_identifier = data["transfer_identifier"]
 
     if request.user.is_authenticated:
-        transfer_user = Deposit.objects.get(id=transfer_identifier)
+        transfer_user = get_deposit(transfer_identifier)
 
         salt = "chicken"
         signature_str = f"{transfer_user.account.account_number}{transfer_user.user.user_name}{transfer_user.amount}{salt}"
@@ -131,9 +140,7 @@ def deposit_account(request: Request) -> str:
         if not signature_hash == signature:
             return Response({"message": "권한이 필요합니다."}, status=status.HTTP_403_FORBIDDEN)
 
-        account = Account.objects.get(
-            account_number=transfer_user.account.account_number
-        )
+        account = get_deposited_account(transfer_user)
 
         account_update_data = {
             "account_name": account.account_name,
