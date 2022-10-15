@@ -7,9 +7,6 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from .models import Deposit
-from apps.users.models import User
-
 from .serializers import (
     AssetSerializer,
     InvestmentDetailSerializer,
@@ -22,6 +19,7 @@ from .repository.get_object import (
     get_user_account,
     get_user_all_account,
     get_user_own_asset,
+    get_requested_user,
     get_requested_account,
     get_transfer_identifier,
     get_deposit,
@@ -85,7 +83,7 @@ def verificate_account(request: Request) -> int:
     account_number = data["account_number"]
 
     if request.user.is_authenticated:
-        user = User.objects.get(user_name=user_name)
+        user = get_requested_user(user_name)
 
         if not request.user.user_name == user.user_name:
             return Response(

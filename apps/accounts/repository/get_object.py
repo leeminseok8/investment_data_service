@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from apps.accounts.models import Account, Asset, Deposit
+from apps.users.models import User
 
 
 def get_user_account(user: int) -> Account:
@@ -26,6 +27,19 @@ def get_user_own_asset(account_id: int) -> Asset:
 
     asset = Asset.objects.filter(account_id=account_id)
     return asset
+
+
+def get_requested_user(user_name: str) -> User:
+    """
+    Args:
+        user_name : 클라이언트에게 요청받은 유저 이름
+
+    Return:
+        User : 요청에 대한 응답 유저(User) 객체
+    """
+
+    user = User.objects.get(user_name=user_name)
+    return user
 
 
 def get_user_all_account(user: int) -> Account:
