@@ -26,6 +26,7 @@ def get_user_own_asset(account_id: int) -> Asset:
     """
 
     asset = Asset.objects.filter(account_id=account_id)
+    asset = asset.select_related("stock")
     return asset
 
 
